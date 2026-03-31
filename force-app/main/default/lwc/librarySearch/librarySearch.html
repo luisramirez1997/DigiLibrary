@@ -1,0 +1,106 @@
+<!--
+ ─────────────────────────────────────────────────────────────────────────────
+ @component   librarySearch
+ @description Search interface for the DigiLibrary. Allows users to search
+              books by title or author, view availability, and request loans.
+ @author      Luis Hernandez
+ @version     1.1
+ @date        2026-03-31
+ ─────────────────────────────────────────────────────────────────────────────
+-->
+<template>
+    <lightning-card title="DigiLibrary — Book Search" icon-name="standard:knowledge">
+
+        <div class="slds-p-around_medium">
+
+            <!-- ── Search Bar ────────────────────────────────────────────── -->
+            <lightning-layout vertical-align="end">
+                <lightning-layout-item flexibility="auto">
+                    <lightning-input
+                        label="Search by title or author"
+                        placeholder="e.g. El Principito"
+                        value={searchTerm}
+                        onchange={handleSearchInput}
+                        onkeyup={handleKeyUp}>
+                    </lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item class="slds-m-left_small">
+                    <lightning-button
+                        label="Search"
+                        variant="brand"
+                        onclick={handleSearch}>
+                    </lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+
+            <!-- ── Borrower Picker ──────────────────────────────────────── -->
+            <div class="slds-m-top_small">
+                <lightning-record-picker
+                    label="Borrower (Contact)"
+                    placeholder="Select a contact..."
+                    object-api-name="Contact"
+                    value={selectedBorrowerId}
+                    onchange={handleBorrowerChange}>
+                </lightning-record-picker>
+            </div>
+
+            <!-- ── Loading Spinner ──────────────────────────────────────── -->
+            <template lwc:if={isLoading}>
+                <div class="slds-m-top_medium slds-align_absolute-center">
+                    <lightning-spinner alternative-text="Searching..." size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- ── No Results Message ───────────────────────────────────── -->
+            <template lwc:if={noResults}>
+                <div class="slds-m-top_medium">
+                    <p class="slds-text-color_weak slds-text-align_center">
+                        No books found for "<strong>{searchTerm}</strong>".
+                    </p>
+                </div>
+            </template>
+
+            <!-- ── Results Table ────────────────────────────────────────── -->
+            <template lwc:if={hasResults}>
+                <div class="slds-m-top_medium slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Title</div></th>
+                                <th scope="col"><div class="slds-truncate">Author</div></th>
+                                <th scope="col"><div class="slds-truncate">Available</div></th>
+                                <th scope="col"><div class="slds-truncate">Total</div></th>
+                                <th scope="col"><div class="slds-truncate">Action</div></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={books} for:item="book">
+                                <tr key={book.Id}>
+                                    <td><div class="slds-truncate">{book.Tittle__c}</div></td>
+                                    <td><div class="slds-truncate">{book.Author__c}</div></td>
+                                    <td>
+                                        <!-- ── Availability badge ──────── -->
+                                        <span class={book.availabilityBadge}>
+                                            {book.Available_Copies__c}
+                                        </span>
+                                    </td>
+                                    <td><div class="slds-truncate">{book.Total_Copies__c}</div></td>
+                                    <td>
+                                        <lightning-button
+                                            label={book.loanButtonLabel}
+                                            variant="neutral"
+                                            data-book-id={book.Id}
+                                            disabled={book.loanButtonDisabled}
+                                            onclick={handleLoanRequest}>
+                                        </lightning-button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
