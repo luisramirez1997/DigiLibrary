@@ -89,9 +89,14 @@ export default class LibrarySearch extends LightningElement {
         loanBook({ bookId, borrowerId: this.selectedBorrowerId })
             .then(() => {
                 this.showToast('Success', 'Loan registered successfully!', 'success');
-                this._processingBookId = null;
-                // § Refresh so availability count updates immediately in the table
-                this.handleSearch();
+                // § Reset everything so the user starts fresh
+                this._processingBookId  = null;
+                this.searchTerm         = '';
+                this.selectedBorrowerId = null;
+                this.books              = [];
+                this._hasSearched       = false;
+                this.template.querySelector('lightning-input').value = '';
+                this.template.querySelector('lightning-record-picker').value = null;
             })
             .catch(error => {
                 this.showToast('Error', this.extractError(error), 'error');
@@ -111,14 +116,14 @@ export default class LibrarySearch extends LightningElement {
     _annotatebooks(rawBooks) {
         this.books = rawBooks.map(book => ({
             ...book,
+            isUnavailable      : book.Available_Copies__c <= 0,
             availabilityBadge  : book.Available_Copies__c > 0
                 ? 'slds-badge slds-theme_success'
                 : 'slds-badge slds-theme_error',
             loanButtonLabel    : this._processingBookId === book.Id
                 ? 'Processing...'
                 : 'Request Loan',
-            loanButtonDisabled : book.Available_Copies__c <= 0
-                || !this.selectedBorrowerId
+            loanButtonDisabled : !this.selectedBorrowerId
                 || this._processingBookId === book.Id
         }));
     }

@@ -86,13 +86,20 @@
                                     </td>
                                     <td><div class="slds-truncate">{book.Total_Copies__c}</div></td>
                                     <td>
-                                        <lightning-button
-                                            label={book.loanButtonLabel}
-                                            variant="neutral"
-                                            data-book-id={book.Id}
-                                            disabled={book.loanButtonDisabled}
-                                            onclick={handleLoanRequest}>
-                                        </lightning-button>
+                                        <template lwc:if={book.isUnavailable}>
+                                            <span class="slds-text-color_error slds-text-body_small">
+                                                &#9888; No copies available
+                                            </span>
+                                        </template>
+                                        <template lwc:else>
+                                            <lightning-button
+                                                label={book.loanButtonLabel}
+                                                variant="neutral"
+                                                data-book-id={book.Id}
+                                                disabled={book.loanButtonDisabled}
+                                                onclick={handleLoanRequest}>
+                                            </lightning-button>
+                                        </template>
                                     </td>
                                 </tr>
                             </template>
