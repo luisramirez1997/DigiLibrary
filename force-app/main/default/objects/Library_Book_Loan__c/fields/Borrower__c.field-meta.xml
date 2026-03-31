@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Borrower__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>DigiLibrary app</description>
+    <inlineHelpText>Choose a contact for borrowing this book</inlineHelpText>
+    <label>Borrower</label>
+    <referenceTo>Contact</referenceTo>
+    <relationshipLabel>Library Book Loans</relationshipLabel>
+    <relationshipName>Library_Book_Loans1</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
