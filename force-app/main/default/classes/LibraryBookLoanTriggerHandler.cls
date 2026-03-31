@@ -44,8 +44,8 @@ public with sharing class LibraryBookLoanTriggerHandler {
             Library_Book__c book = bookMap.get(loan.Book__c);
 
             if (book == null || book.Available_Copies__c <= 0) {
-                // Attaching the error to the field surfaces it in both UI and API
-                loan.Book__c.addError('No available copies for this book.');
+                // Attaching the error to the record surfaces it in both UI and API
+                loan.addError('No available copies for this book.');
             }
         }
     }
